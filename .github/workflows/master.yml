@@ -49,7 +49,7 @@ jobs:
       - name: Move folders to build
         run: |
           mkdir build
-          mv ./{addons,cfg} build/
+          mv ./addons build/
       
       - name: Remove unnecessary files and folders from build
         run: |
@@ -57,10 +57,9 @@ jobs:
         working-directory: ./build
 
       - name: Compress package
-        run: |
-          cd build-linux
-          zip -9rq ../bot-gloves.zip *
-      
+        run: zip -9rq ../bot-gloves.zip *
+        working-directory: ./build
+        
       - name: Set Commit Hash
         id: commit_info
         run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
