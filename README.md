@@ -1,6 +1,6 @@
 # Bot Gloves
 
-![Downloads](https://img.shields.io/github/downloads/zer0k-z/bot_gloves/total?style=flat-square) ![Last commit](https://img.shields.io/github/last-commit/zer0k-z/bot_gloves?style=flat-square) ![Open issues](https://img.shields.io/github/issues/zer0k-z/bot_gloves?style=flat-square) ![Closed issues](https://img.shields.io/github/issues-closed/zer0k-z/bot_gloves?style=flat-square) ![Size](https://img.shields.io/github/repo-size/zer0k-z/bot_gloves?style=flat-square) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/zer0k-z/bot_gloves/Compile%20with%20SourceMod?style=flat-square)
+![Downloads](https://img.shields.io/github/downloads/zer0k-z/bot-gloves/total?style=flat-square) ![Last commit](https://img.shields.io/github/last-commit/zer0k-z/bot-gloves?style=flat-square) ![Open issues](https://img.shields.io/github/issues/zer0k-z/bot-gloves?style=flat-square) ![Closed issues](https://img.shields.io/github/issues-closed/zer0k-z/bot-gloves?style=flat-square) ![Size](https://img.shields.io/github/repo-size/zer0k-z/bot-gloves?style=flat-square) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/zer0k-z/bot-gloves/Compile%20with%20SourceMod?style=flat-square)
 
 ## Description ##
 Add gloves to bots. This is a stripped down version of [kgn's gloves plugin](https://github.com/kgns/gloves), but is modified to work with bots instead.
