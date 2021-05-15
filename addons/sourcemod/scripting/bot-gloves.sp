@@ -11,7 +11,7 @@ public Plugin myinfo =
 	name = "bot-gloves",
 	author = "zer0.k",
 	description = "Give custom gloves to bots",
-	version = "1.1.0",
+	version = "1.1.1",
 	url = "https://github.com/zer0k-z/bot-gloves"
 };
 
@@ -112,11 +112,9 @@ public int Menu_Callback(Menu menu, MenuAction action, int param1, int param2)
 			if (StrEqual(buffer, "Default"))
 			{
 				PrintToChat(param1, "Gloves selected: Default");
-				int ent = GetEntPropEnt(param1, Prop_Send, "m_hMyWearables");
-				if(ent != -1)
-				{
-					AcceptEntityInput(ent, "KillHierarchy");
-				}
+				g_iCurrentGlove = -1;
+				g_iGlovePaint = -1;
+				g_iGloveType = -1;
 			}
 			else
 			{
@@ -301,11 +299,14 @@ public void GiveBotGloves(int client)
 	{
 		AcceptEntityInput(ent, "KillHierarchy");
 	}
+	if ((g_iGlovePaint == -1) || (g_iGloveType == -1))
+	{
+		return;
+	}
 	// Create wearable, set its properties, give it to bot
 	ent = CreateEntityByName("wearable_item");
 	if(ent != -1)
 	{
-
 		SetEntProp(ent, Prop_Send, "m_iItemIDLow", -1);
 		// Glove type
 		SetEntProp(ent, Prop_Send, "m_iItemDefinitionIndex", g_iGloveType);
