@@ -11,7 +11,7 @@ public Plugin myinfo =
 	name = "bot-gloves",
 	author = "zer0.k",
 	description = "Give custom gloves to bots",
-	version = "1.0.1",
+	version = "1.1.0",
 	url = "https://github.com/zer0k-z/bot-gloves"
 };
 
@@ -83,7 +83,7 @@ void ShowMenu(int client)
 	Menu menu = new Menu(Menu_Callback);
 	menu.SetTitle("Glove Selection");
 
-
+	menu.AddItem("Default", "Default");
 	// Jump into the first subsection
 	if (!g_KVGloves.GotoFirstSubKey())
 	{
@@ -107,9 +107,24 @@ public int Menu_Callback(Menu menu, MenuAction action, int param1, int param2)
 	{
 		case MenuAction_Select:
 		{
-			char gloveType[32];
-			menu.GetItem(param2, gloveType, sizeof(gloveType));
-			SkinMenu(param1, gloveType);
+			char buffer[30];
+			menu.GetItem(param2, buffer, sizeof(buffer));
+			if (StrEqual(buffer, "Default"))
+			{
+				PrintToChat(param1, "Gloves selected: Default");
+				int ent = GetEntPropEnt(param1, Prop_Send, "m_hMyWearables");
+				if(ent != -1)
+				{
+					AcceptEntityInput(ent, "KillHierarchy");
+				}
+			}
+			else
+			{
+				char gloveType[32];
+				menu.GetItem(param2, gloveType, sizeof(gloveType));
+				SkinMenu(param1, gloveType);
+				PrintToChat(param1, "Gloves selected: %s", gloveType);
+			}
 		}
 		case MenuAction_End:
 		{
@@ -166,6 +181,7 @@ public int SkinMenu_Callback(Menu menu, MenuAction action, int param1, int param
 			g_iGloveType = g_iCurrentGlove;
 			g_KVGloves.GetString("index", temp, 32);
 			g_iGlovePaint = StringToInt(temp);
+			PrintToChat(param1, "Gloves skin selected: %s", skinType);
 		}
 		case MenuAction_End:
 		{
@@ -179,17 +195,19 @@ public Action CommandBFloat(int client, int args)
 {
 	if (args < 1)
 	{
-		PrintToChat(client, "Usage: !bgloves_float <value>");
+		PrintToChat(client, "Usage: !botgloves_float <value>");
 		return Plugin_Handled;
 	}
 	char arg[64];
 	g_fFloatValue = StringToFloat(arg);
+	PrintToChat(client, "Bot gloves' float value is set to %f.", g_fFloatValue);
 	return Plugin_Handled;
 }
 
 public Action CommandBToggleWorldModel(int client, int args)
 {
 	g_bEnableWorldModel = !g_bEnableWorldModel;
+	PrintToChat(client, "World model for gloves %s.", g_bEnableWorldModel ? "enabled" : "disabled");
 	return Plugin_Handled;
 }
 
