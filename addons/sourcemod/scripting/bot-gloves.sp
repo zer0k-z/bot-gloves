@@ -10,9 +10,9 @@ public Plugin myinfo =
 {
 	name = "bot-gloves",
 	author = "zer0.k",
-	description = "",
-	version = "1.0",
-	url = "https://github.com/zer0k-z/bot_gloves"
+	description = "Give custom gloves to bots",
+	version = "1.0.1",
+	url = "https://github.com/zer0k-z/bot-gloves"
 };
 
 // Variables
@@ -27,7 +27,7 @@ float g_fFloatValue = 0.000001;
 // userinfo structure
 #define PLAYER_INFO_LEN 344
 
-enum 
+enum
 {
 	PlayerInfo_Version = 0,             // uint64
 	PlayerInfo_XUID = 8,                // uint64
@@ -63,13 +63,13 @@ public Action CommandBGlove(int client, int args)
 	{
 		return Plugin_Handled;
 	}
-	
+
 	if(args != 0)
 	{
-		ReplyToCommand(client, "Usage: sm_bglove");
+		ReplyToCommand(client, "Usage: sm_botgloves");
 		return Plugin_Handled;
 	}
-	
+
 	else
 	{
 		ShowMenu(client);
@@ -80,9 +80,9 @@ public Action CommandBGlove(int client, int args)
 void ShowMenu(int client)
 {
 	SetupGlovesKV();
-	Menu menu = new Menu(Menu_Callback);		
+	Menu menu = new Menu(Menu_Callback);
 	menu.SetTitle("Glove Selection");
-	
+
 
 	// Jump into the first subsection
 	if (!g_KVGloves.GotoFirstSubKey())
@@ -102,7 +102,7 @@ void ShowMenu(int client)
 }
 
 public int Menu_Callback(Menu menu, MenuAction action, int param1, int param2)
-{	
+{
 	switch(action)
 	{
 		case MenuAction_Select:
@@ -110,22 +110,18 @@ public int Menu_Callback(Menu menu, MenuAction action, int param1, int param2)
 			char gloveType[32];
 			menu.GetItem(param2, gloveType, sizeof(gloveType));
 			SkinMenu(param1, gloveType);
-		}		
-		case MenuAction_Cancel:
-		{
-			PrintToServer("Client %d's menu was cancelled for reason %d", param1, param2);
 		}
 		case MenuAction_End:
 		{
 			delete menu;
-		}		
+		}
 	}
 	return 0;
 }
 public void SkinMenu(int client, char[] gloves)
 {
-	Menu skinMenu = new Menu(SkinMenu_Callback);		
-	skinMenu.SetTitle("Skin Selection");	
+	Menu skinMenu = new Menu(SkinMenu_Callback);
+	skinMenu.SetTitle("Skin Selection");
 	char buffer[32];
 	g_KVGloves.Rewind();
 
@@ -150,7 +146,7 @@ public void SkinMenu(int client, char[] gloves)
 	} while (g_KVGloves.GotoNextKey());
 	skinMenu.ExitButton = true;
 	skinMenu.Display(client, MENU_TIME_FOREVER);
-	
+
 }
 public int SkinMenu_Callback(Menu menu, MenuAction action, int param1, int param2)
 {
@@ -170,10 +166,6 @@ public int SkinMenu_Callback(Menu menu, MenuAction action, int param1, int param
 			g_iGloveType = g_iCurrentGlove;
 			g_KVGloves.GetString("index", temp, 32);
 			g_iGlovePaint = StringToInt(temp);
-		}		
-		case MenuAction_Cancel:
-		{
-			PrintToServer("Client %d's menu was cancelled for reason %d", param1, param2);
 		}
 		case MenuAction_End:
 		{
@@ -206,8 +198,7 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 	int client = GetClientOfUserId(GetEventInt(event, "userid"));
 
 	if(IsFakeClient(client) == true && IsClientInGame(client) && IsClientConnected(client))
-	{	
-		LogMessage("%i, %i, %f", g_iGloveType, g_iGlovePaint, g_fFloatValue);
+	{
 		// If there's no glove to set, skip this
 		// Also fix a bug where the server tries to set gloves too early
 		if (!g_iGloveType || !g_iGlovePaint)
@@ -224,7 +215,7 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 			// Give gloves to bot
 			CreateTimer(0.05, GiveGloves, client);
 		}
-	}	
+	}
 	return Plugin_Handled;
 }
 
@@ -234,18 +225,18 @@ public void PatchBotData(int client)
 
 	if (tableIdx == INVALID_STRING_TABLE)
 	{
-		LogError("cannot find tableid!");		
+		LogError("cannot find tableid!");
 	}
 
 	char userInfo[PLAYER_INFO_LEN];
 
 	if (!GetStringTableData(tableIdx, client - 1, userInfo, PLAYER_INFO_LEN))
 	{
-		LogError("cannot find string table data!");		
+		LogError("cannot find string table data!");
 	}
 
 	// Set bot name to its original name
-	char clientName[128];		
+	char clientName[128];
 	GetClientName(client, clientName, 128);
 	Format(userInfo[PlayerInfo_Name], 128, "%s", clientName);
 
@@ -297,31 +288,31 @@ public void GiveBotGloves(int client)
 	if(ent != -1)
 	{
 
-		SetEntProp(ent, Prop_Send, "m_iItemIDLow", -1);		
+		SetEntProp(ent, Prop_Send, "m_iItemIDLow", -1);
 		// Glove type
 		SetEntProp(ent, Prop_Send, "m_iItemDefinitionIndex", g_iGloveType);
 		// Paint
 		SetEntProp(ent, Prop_Send,  "m_nFallbackPaintKit", g_iGlovePaint);
 		// Float
-		SetEntPropFloat(ent, Prop_Send, "m_flFallbackWear", g_fFloatValue);	
+		SetEntPropFloat(ent, Prop_Send, "m_flFallbackWear", g_fFloatValue);
 		SetEntProp(ent, Prop_Send, "m_iAccountID", client);
-		SetEntPropEnt(ent, Prop_Data, "m_hOwnerEntity", client);		
+		SetEntPropEnt(ent, Prop_Data, "m_hOwnerEntity", client);
 		SetEntPropEnt(ent, Prop_Data, "m_hParent", client);
 		SetEntProp(ent, Prop_Send, "m_OriginalOwnerXuidHigh", 0);
 		SetEntProp(ent, Prop_Send, "m_OriginalOwnerXuidLow", 0);
-		
+
 		SetEntProp(ent, Prop_Send, "m_bInitialized", 1);
 
 		if (g_bEnableWorldModel)
 		{
 			SetEntPropEnt(ent, Prop_Data, "m_hMoveParent", client);
 		}
-		
+
 		DispatchSpawn(ent);
-		
+
 		SetEntPropEnt(client, Prop_Send, "m_hMyWearables", ent);
 
-		if(g_bEnableWorldModel) 
+		if(g_bEnableWorldModel)
 		{
 			SetEntProp(client, Prop_Send, "m_nBody", 1);
 		}
@@ -332,8 +323,8 @@ public Action ResetGlovesTimer(Handle timer, DataPack pack)
 {
 	ResetPack(pack);
 	int clientIndex = pack.ReadCell();
-	int activeWeapon = pack.ReadCell();	
-	SetEntPropEnt(clientIndex, Prop_Send, "m_hActiveWeapon", activeWeapon);	
+	int activeWeapon = pack.ReadCell();
+	SetEntPropEnt(clientIndex, Prop_Send, "m_hActiveWeapon", activeWeapon);
 
 	// Reset bot data so it appears on the scoreboard
 	CreateTimer(0.25, ResetBotData, clientIndex);
@@ -345,14 +336,14 @@ public Action ResetBotData(Handle timer, int client)
 
 	if (tableIdx == INVALID_STRING_TABLE)
 	{
-		LogError("cannot find tableid!");		
+		LogError("cannot find tableid!");
 	}
 
 	char userInfo[PLAYER_INFO_LEN];
 
 	if (!GetStringTableData(tableIdx, client - 1, userInfo, PLAYER_INFO_LEN))
 	{
-		LogError("cannot find string table data!");		
+		LogError("cannot find string table data!");
 	}
 
 	// Set bot name to its original name
