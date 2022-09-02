@@ -11,7 +11,7 @@ public Plugin myinfo =
 	name = "bot-gloves",
 	author = "zer0.k",
 	description = "Give custom gloves to bots",
-	version = "1.1.1",
+	version = "1.1.2",
 	url = "https://github.com/zer0k-z/bot-gloves"
 };
 
@@ -211,9 +211,14 @@ public Action CommandBToggleWorldModel(int client, int args)
 
 public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast)
 {
-	int client = GetClientOfUserId(GetEventInt(event, "userid"));
+	CreateTimer(0.1, OnPlayerSpawn_Timer, event.GetInt("userid"));
+	return Plugin_Handled;
+}
+public Action OnPlayerSpawn_Timer(Handle timer, int userid)
+{
+	int client = GetClientOfUserId(userid);
 
-	if(IsFakeClient(client) == true && IsClientInGame(client) && IsClientConnected(client))
+	if(IsFakeClient(client) && IsClientInGame(client) && IsClientConnected(client))
 	{
 		// If there's no glove to set, skip this
 		// Also fix a bug where the server tries to set gloves too early
@@ -229,12 +234,11 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 			PatchBotData(client);
 
 			// Give gloves to bot
-			CreateTimer(0.05, GiveGloves, client);
+			CreateTimer(0.15, GiveGloves, client);
 		}
 	}
 	return Plugin_Handled;
 }
-
 public void PatchBotData(int client)
 {
 	int tableIdx = FindStringTable("userinfo");
@@ -284,8 +288,8 @@ public Action GiveGloves(Handle timer, int client)
 		if(activeWeapon != -1)
 		{
 			DataPack dpack;
-			CreateDataTimer(0.1, ResetGlovesTimer, dpack);
-			dpack.WriteCell(client);
+			CreateDataTimer(0.2, ResetGlovesTimer, dpack);
+			dpack.WriteCell(GetClientUserId(client));
 			dpack.WriteCell(activeWeapon);
 		}
 	}
@@ -341,7 +345,7 @@ public void GiveBotGloves(int client)
 public Action ResetGlovesTimer(Handle timer, DataPack pack)
 {
 	ResetPack(pack);
-	int clientIndex = pack.ReadCell();
+	int clientIndex = GetClientOfUserId(pack.ReadCell());
 	int activeWeapon = pack.ReadCell();
 	SetEntPropEnt(clientIndex, Prop_Send, "m_hActiveWeapon", activeWeapon);
 

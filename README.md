@@ -5,8 +5,7 @@
 ## Description ##
 Add gloves to bots. This is a stripped down version of [kgn's gloves plugin](https://github.com/kgns/gloves), but is modified to work with bots instead.
 
-This was made for GOKZ bots so video editors can change bot's gloves to ones that are used by players. 
-*Sidenote: GOKZ bots currently have broken models now, use the [bot model fix plugin](https://github.com/zer0k-z/gokz-botmodelfix) for world model to work properly.*
+This was made for GOKZ bots so video editors can change bot's gloves to ones that are used by players.
 
 **Warning**: This can get your server blacklisted or your GSLT token banned, it is recommended to use in LAN settings only.
 
